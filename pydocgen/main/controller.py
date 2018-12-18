@@ -105,9 +105,7 @@ def generatepdf():
 
     if(doc_format == 'pdf'):
         #Convert to PDF
-        jar_file_path = os.path.abspath(os.path.join(root_directory, "../bin/docs-to-pdf-converter-1.8.jar"))
-        exec_args = " -i " + os.path.abspath(merged_doc_path)
-        os.system("java -jar " + jar_file_path + exec_args)  
+        os.system("unoconv -f pdf " + os.path.abspath(merged_doc_path))  
         
         with open(merged_pdf_path, "rb") as pdf_file:
             merged_doc_encoded = base64.b64encode(pdf_file.read())
@@ -142,16 +140,17 @@ def combine_word_documents(input_files):
     for filnr, file in enumerate(input_files):
         if filnr == 0:
             merged_document = Document(file)
-            
 
         else:
             sub_doc = Document(file)
             # Don't add a page break if you've reached the last file.
             if filnr < len(input_files)-1:
                sub_doc.add_page_break()
-            
+            merged_document.add_page_break()
             for element in sub_doc.element.body:
                 merged_document.element.body.append(element)
+            
+       # merged_document.add_page_break()
 
 
     return merged_document
